@@ -1,0 +1,1 @@
+This source code and NuGet package can only be used as part of Frends (https://frends.com) platform processes and integrations. Copying, redistributing and all other uses other than as part of Frends process are not allowed.

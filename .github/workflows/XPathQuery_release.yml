@@ -1,0 +1,11 @@
+name: XPathQuery release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/release.yml
+    with:
+      workdir: Frends.XML.XPathQuery
+    secrets: inherit

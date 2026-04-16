@@ -1,0 +1,11 @@
+name: Validate release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/release.yml
+    with:
+      workdir: Frends.XML.Validate
+    secrets: inherit

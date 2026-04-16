@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Frends.XSLT.Transform</AssemblyName>
+    <RootNamespace>Frends.XSLT.Transform</RootNamespace>
+
+    <Version>2.3.0</Version>
+    <Authors>Frends</Authors>
+    <Copyright>Frends</Copyright>
+    <Company>Frends</Company>
+    <Product>Frends</Product>
+    <PackageTags>Frends</PackageTags>
+	<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Description>Frends Task for transforming XML using XSLT.</Description>
+    <PackageProjectUrl>https://frends.com/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/FrendsPlatform/Frends.CrossplatformXML</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Frends.Saxon.Activation" Version="1.1.4" />
+    <PackageReference Include="SaxonCS" Version="12.5.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="FrendsTaskMetadata.json" Pack="true" PackagePath="/">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Include="../LICENSE.md" Pack="true" PackagePath="/">
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,17 @@
+name: Transform test
+
+on:
+  workflow_dispatch:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - 'Frends.XSLT.Transform/**'
+
+jobs:
+  build:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      workdir: Frends.XSLT.Transform
+    secrets: inherit
+      

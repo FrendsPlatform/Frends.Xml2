@@ -1,0 +1,17 @@
+name: XPathQuery main
+
+on:
+  workflow_dispatch:
+  push:
+    branches:    
+      - main
+    paths:
+      - 'Frends.XML.XPathQuery/**'
+
+jobs:
+  build:
+    uses: ./.github/workflows/build_main.yml
+    with:
+      workdir: Frends.XML.XPathQuery
+    secrets: inherit
+      

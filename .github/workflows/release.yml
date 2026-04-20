@@ -1,0 +1,85 @@
+# We use a custom build here because we need to use our private NuGet during build for running tests.
+name: Reusable release
+
+on:
+  workflow_call:
+    inputs:
+      workdir:
+        required: true
+        type: string
+
+env:
+  public_feed_url: https://pkgs.dev.azure.com/frends-platform/frends-tasks/_packaging/main/nuget/v3/index.json
+  private_feed_url: https://pkgs.dev.azure.com/frends-platform/_packaging/main-private/nuget/v3/index.json
+
+jobs:
+  build:
+    name: Build on windows-latest
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4.2.2
+    - uses: actions/setup-dotnet@v4.3.1
+      with:
+        dotnet-version: '6.0.x'
+        source-url: ${{ env.private_feed_url }}
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.TASKS_FEED_API_KEY }} 
+
+    - name: Set working directory if provided
+      run: |
+        echo "workdir=${{ inputs.workdir }}" >> $env:GITHUB_ENV
+
+    - name: Set working directory to default if not provided
+      if: ${{ inputs.workdir == '' }}
+      run: |
+        echo "workdir=." >> $env:GITHUB_ENV
+        
+    - name: Build
+      run: dotnet build
+      working-directory: "${{ inputs.workdir }}"
+    
+    - name: Test
+      run: dotnet test --collect:"XPlat Code Coverage"
+      working-directory: "${{ inputs.workdir }}"
+      
+    - name: Pack release version of task
+      run: dotnet pack --configuration Release --include-source
+      working-directory: "${{ inputs.workdir }}"
+
+    # Setup dotnet again with the public feed instead of the private one
+    - uses: actions/setup-dotnet@v4.3.1
+      with:
+        dotnet-version: '6.0.x'
+        source-url: ${{ env.public_feed_url }}
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.TASKS_FEED_API_KEY }} 
+
+    - name: Get package name
+      id: package_name
+      run: |
+        $pkg = Get-ChildItem -Path . -Filter *.nupkg -Exclude *.symbols.nupkg -Recurse | %{$_.Name}
+        echo "package_name=$pkg" >> $env:GITHUB_OUTPUT
+      working-directory: "${{ inputs.workdir }}"
+      shell: pwsh
+
+    - name: Push NuGet package(s) to the prod feed
+      run: dotnet nuget push "**/${{ steps.package_name.outputs.package_name }}"  --api-key ${{ secrets.TASKS_FEED_API_KEY }} --source ${{ env.public_feed_url }}
+      working-directory: "${{ inputs.workdir }}"
+
+    - name: Get current date (for release creation)
+      id: date
+      run: echo "date=$(date +'%Y-%m-%d')" >> $env:GITHUB_OUTPUT
+      
+    - name: Create Release
+      id: create_release
+      uses: softprops/action-gh-release@v2.2.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: release-${{ steps.package_name.outputs.package_name }}-${{ steps.date.outputs.date }}
+        name: Release ${{ steps.package_name.outputs.package_name }} (${{ steps.date.outputs.date }})
+        body: |
+          You can install the task via frends UI Task View or you can find the NuGet package from https://pkgs.dev.azure.com/frends-platform/frends-tasks/_packaging/main/nuget/v2
+        draft: false
+        prerelease: false

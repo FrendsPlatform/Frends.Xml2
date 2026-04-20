@@ -1,0 +1,17 @@
+name: XPathQuery test
+
+on:
+  workflow_dispatch:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - 'Frends.XML.XPathQuery/**'
+
+jobs:
+  build:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      workdir: Frends.XML.XPathQuery
+    secrets: inherit
+      

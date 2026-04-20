@@ -1,0 +1,79 @@
+# We use a custom build here because we need to use our private NuGet during build for running tests.
+name: Reusable build test
+
+on:
+  workflow_call:
+    inputs:
+      workdir:
+        required: true
+        type: string
+
+env:
+  public_feed_url: https://pkgs.dev.azure.com/frends-platform/frends-tasks/_packaging/test/nuget/v3/index.json
+  private_feed_url: https://pkgs.dev.azure.com/frends-platform/_packaging/main-private/nuget/v3/index.json
+
+jobs:
+  build:
+    name: Build on windows-latest
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4.2.2
+    - uses: actions/setup-dotnet@v4.3.1
+      with:
+        dotnet-version: '6.0.x'
+        source-url: ${{ env.private_feed_url }}
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.TASKS_FEED_API_KEY }} 
+
+    - name: Set working directory if provided
+      run: |
+        echo "workdir=${{ inputs.workdir }}" >> $env:GITHUB_ENV
+
+    - name: Set working directory to default if not provided
+      if: ${{ inputs.workdir == '' }}
+      run: |
+        echo "workdir=." >> $env:GITHUB_ENV
+        
+    - name: Build
+      run: dotnet build
+      working-directory: "${{ inputs.workdir }}"
+    
+    - name: Test
+      run: dotnet test --collect:"XPlat Code Coverage"
+      working-directory: "${{ inputs.workdir }}"
+      
+    - name: Pack release version of task
+      run: dotnet pack --configuration Release --include-source
+      working-directory: "${{ inputs.workdir }}"
+      
+    - name: Save coverage results
+      id: vars
+      shell: pwsh
+      run: |
+        $badgeKey = "${{ github.repository }}|${{ github.ref_name }}"
+        $apiKey = "${{ secrets.BADGE_SERVICE_API_KEY }}"
+        if (!("${{ inputs.workdir }}" -eq '.')) {
+          $badgeKey = "${{ github.repository }}/${{ inputs.workdir }}|${{ github.ref_name }}"
+        }
+        Get-ChildItem -Path "." -Include "coverage.cobertura.xml" -Recurse | Copy-Item -Destination .
+        [double] $coverage = ([xml]($tmp = Get-Content -Path 'coverage.cobertura.xml')).SelectSingleNode("coverage").Attributes["line-rate"].Value
+        $coverageInt = [int]($coverage * 100)
+        $json = @{key=$badgeKey;displayName='Coverage';value=[string]$coverageInt+"%"} | convertto-json
+        $headers = @{'x-api-key'=$apiKey}
+        $badgeKey
+        Invoke-WebRequest -Uri https://app-github-custom-badges.azurewebsites.net/Badge -Method POST -Body $json -Headers $headers -ContentType "application/json"
+      working-directory: "${{ inputs.workdir }}"
+
+    # Setup dotnet again with the public feed instead of the private one
+    - uses: actions/setup-dotnet@v4.3.1
+      with:
+        dotnet-version: '6.0.x'
+        source-url: ${{ env.public_feed_url }}
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.TASKS_FEED_API_KEY }} 
+
+    # This will push all the packages it can find
+    - name: Push NuGet package(s) to the test feed
+      run: dotnet nuget push "**/*.nupkg"  --api-key ${{ secrets.TASKS_FEED_API_KEY }} --source ${{ env.public_feed_url }} --skip-duplicate
+      working-directory: "${{ inputs.workdir }}"

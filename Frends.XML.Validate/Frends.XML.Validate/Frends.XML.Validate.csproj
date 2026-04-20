@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <Version>1.1.0</Version>
+    <Authors>Frends</Authors>
+    <Copyright>Frends</Copyright>
+    <Company>Frends</Company>
+    <Product>Frends</Product>
+    <PackageTags>Frends</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Description>Frends Task for validating XML.</Description>
+    <PackageProjectUrl>https://frends.com/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/FrendsPlatform/Frends.CrossplatformXML</RepositoryUrl>
+    <PackageId>Frends.XML.Validate</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FrendsTaskMetadata.json" Pack="true" PackagePath="/">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

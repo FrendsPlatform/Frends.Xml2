@@ -1,0 +1,17 @@
+name: Validate main
+
+on:
+  workflow_dispatch:
+  push:
+    branches:    
+      - main
+    paths:
+      - 'Frends.XML.Validate/**'
+
+jobs:
+  build:
+    uses: ./.github/workflows/build_main.yml
+    with:
+      workdir: Frends.XML.Validate
+    secrets: inherit
+      

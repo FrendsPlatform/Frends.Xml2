@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.2.0] - 2026-07-14
+### Changed
+- Updated outdated repository URLs
+
 ## [2.1.0] - 2026-02-12
 ### Fixed
 - Prevent XML External Entity (XXE) attack, by adding option to disable External Entities

@@ -1,9 +1,9 @@
 # Frends.XML.XPathQuery
 
 License: CHECK [LICENSE](LICENSE.md) FILE
-[![Build](https://github.com/FrendsPlatform/Frends.CrossplatformXML/actions/workflows/XPathQuery_main.yml/badge.svg)](https://github.com/FrendsPlatform/Frends.CrossplatformXML/actions)
+[![Build](https://github.com/FrendsPlatform/Frends.Xml2/actions/workflows/XPathQuery_main.yml/badge.svg)](https://github.com/FrendsPlatform/Frends.Xml2/actions)
 ![MyGet](https://img.shields.io/myget/frends-tasks/v/Frends.XML.XPathQuery)
-![Coverage](https://app-github-custom-badges.azurewebsites.net/Badge?key=FrendsPlatform/Frends.CrossplatformXML/Frends.XML.XPathQuery|main)
+![Coverage](https://app-github-custom-badges.azurewebsites.net/Badge?key=FrendsPlatform/Frends.Xml2/Frends.XML.XPathQuery|main)
 
 Task for querying XML using XPath.
 

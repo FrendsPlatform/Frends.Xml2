@@ -7,7 +7,7 @@
         <AssemblyName>Frends.XML.XPathQuery</AssemblyName>
         <RootNamespace>Frends.XML.XPathQuery</RootNamespace>
 
-        <Version>2.1.0</Version>
+        <Version>2.2.0</Version>
         <Authors>Frends</Authors>
         <Copyright>Frends</Copyright>
         <Company>Frends</Company>
@@ -17,7 +17,7 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <Description>Task for querying XML using XPath queries.</Description>
         <PackageProjectUrl>https://frends.com/</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/FrendsPlatform/Frends.CrossplatformXML</RepositoryUrl>
+        <RepositoryUrl>https://github.com/FrendsPlatform/Frends.Xml2/tree/main/Frends.XML.XPathQuery</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>

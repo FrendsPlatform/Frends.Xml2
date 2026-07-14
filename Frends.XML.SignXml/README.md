@@ -2,8 +2,8 @@
 A Frends task to sign an XML document
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Build](https://github.com/FrendsPlatform/Frends.CrossplatformXML/actions/workflows/Frends.XML.SignXml_build_and_test_on_push.yml/badge.svg)](https://github.com/FrendsPlatform/Frends.CrossplatformXML/actions)
-![Coverage](https://app-github-custom-badges.azurewebsites.net/Badge?key=FrendsPlatform/Frends.CrossplatformXML/Frends.XML.SignXml|main)
+[![Build](https://github.com/FrendsPlatform/Frends.Xml2/actions/workflows/Frends.XML.SignXml_build_and_test_on_push.yml/badge.svg)](https://github.com/FrendsPlatform/Frends.Xml2/actions)
+![Coverage](https://app-github-custom-badges.azurewebsites.net/Badge?key=FrendsPlatform/Frends.Xml2/Frends.XML.SignXml|main)
 
 ## Installing
 
@@ -13,7 +13,7 @@ You can install the Task via frends UI Task View.
 
 ### Clone a copy of the repository
 
-`git clone https://github.com/FrendsPlatform/Frends.Frends.XML.SignXml.git`
+`git clone https://github.com/FrendsPlatform/Frends.Xml2/Frends.Frends.XML.SignXml.git`
 
 ### Build the project
 

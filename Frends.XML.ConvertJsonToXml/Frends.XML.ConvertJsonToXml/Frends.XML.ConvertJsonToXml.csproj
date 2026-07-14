@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<LangVersion>Latest</LangVersion>
-		<Version>1.1.0</Version>
+		<Version>1.2.0</Version>
 		<Authors>Frends</Authors>
 		<Copyright>Frends</Copyright>
 		<Company>Frends</Company>
@@ -14,7 +14,7 @@
 		<Description>Frends Task for converting Json string to Xml string.</Description>
 		<PackageProjectUrl>https://frends.com/</PackageProjectUrl>
 		<RepositoryUrl>
-			https://github.com/FrendsPlatform/Frends.CrossplatformXML/tree/main/Frends.XML.ConvertJsonToXml</RepositoryUrl>
+			https://github.com/FrendsPlatform/Frends.Xml2/tree/main/Frends.XML.ConvertJsonToXml</RepositoryUrl>
 	</PropertyGroup>
 
 	<ItemGroup>

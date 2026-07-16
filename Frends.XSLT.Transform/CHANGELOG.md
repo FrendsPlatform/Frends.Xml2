@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.4.0] - 2026-07-14
+### Changed
+- Updated outdated repository URLs
+
 ## [2.3.0] - 2026-04-15
 ### Fixed
 - Replace null in the XsltParameters list with an empty string to prevent null reference exceptions.

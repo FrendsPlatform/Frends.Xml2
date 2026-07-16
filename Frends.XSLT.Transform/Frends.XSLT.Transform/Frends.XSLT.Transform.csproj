@@ -7,7 +7,7 @@
     <AssemblyName>Frends.XSLT.Transform</AssemblyName>
     <RootNamespace>Frends.XSLT.Transform</RootNamespace>
 
-    <Version>2.3.0</Version>
+    <Version>2.4.0</Version>
     <Authors>Frends</Authors>
     <Copyright>Frends</Copyright>
     <Company>Frends</Company>
@@ -17,7 +17,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Description>Frends Task for transforming XML using XSLT.</Description>
     <PackageProjectUrl>https://frends.com/</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/FrendsPlatform/Frends.CrossplatformXML</RepositoryUrl>
+    <RepositoryUrl>https://github.com/FrendsPlatform/Frends.Xml2/tree/main/Frends.XSLT.Transform</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

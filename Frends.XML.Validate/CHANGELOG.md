@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.2.0] - 2026-07-14
+### Changed
+- Updated outdated repository URLs
+
 ## [1.1.0] - 2025-03-25
 ### Changed
 - Update packages:

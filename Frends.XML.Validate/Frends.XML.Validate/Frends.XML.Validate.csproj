@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <Authors>Frends</Authors>
     <Copyright>Frends</Copyright>
     <Company>Frends</Company>
@@ -15,7 +15,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Description>Frends Task for validating XML.</Description>
     <PackageProjectUrl>https://frends.com/</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/FrendsPlatform/Frends.CrossplatformXML</RepositoryUrl>
+    <RepositoryUrl>https://github.com/FrendsPlatform/Frends.Xml2/tree/main/Frends.XML.Validate</RepositoryUrl>
     <PackageId>Frends.XML.Validate</PackageId>
   </PropertyGroup>
 

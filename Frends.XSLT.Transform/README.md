@@ -1,8 +1,8 @@
 # Frends.XSLT.Transform
 
 License: CHECK [LICENSE](LICENSE.md) FILE
-[![Build](https://github.com/FrendsPlatform/Frends.CrossplatformXML/actions/workflows/Transform_main.yml/badge.svg)](https://github.com/FrendsPlatform/Frends.CrossplatformXML/actions)
-![Coverage](https://app-github-custom-badges.azurewebsites.net/Badge?key=FrendsPlatform/Frends.CrossplatformXML/Frends.XSLT.Transform|main)
+[![Build](https://github.com/FrendsPlatform/Frends.Xml2/actions/workflows/Transform_main.yml/badge.svg)](https://github.com/FrendsPlatform/Frends.Xml2/actions)
+![Coverage](https://app-github-custom-badges.azurewebsites.net/Badge?key=FrendsPlatform/Frends.Xml2/Frends.XSLT.Transform|main)
 
 Task for transforming XML using XSLT.
 

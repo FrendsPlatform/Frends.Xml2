@@ -1,4 +1,4 @@
-﻿namespace Frends.XML.SignXml.Definitions;
+namespace Frends.XML.SignXml.Definitions;
 
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -37,4 +37,19 @@ public class Options
     /// </summary>
     /// <example>[DsigC14, DsigC14WithComments]</example>
     public TransformMethod[] TransformMethods { get; set; }
+
+    /// <summary>
+    /// Whether to throw an error on failure.
+    /// </summary>
+    /// <example>true</example>
+    [DefaultValue(true)]
+    public bool ThrowErrorOnFailure { get; set; } = true;
+
+    /// <summary>
+    /// Overrides the error message on failure.
+    /// </summary>
+    /// <example>Failed to sign the XML document</example>
+    [DisplayFormat(DataFormatString = "Text")]
+    [DefaultValue("")]
+    public string ErrorMessageOnFailure { get; set; } = string.Empty;
 }

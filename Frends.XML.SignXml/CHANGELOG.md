@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0] - 2026-11-03
+### Changed
+- **[Breaking Change]** Merged the `Output` parameter group into `Input`; `OutputType`, `OutputFilePath`, `OutputEncoding` and `AddSignatureToSourceFile` are now found in the `Input` tab.
+- **[Breaking Change]** The task now returns a result object containing `Success`, `Output` and `Error`. The signed XML or the output file path, previously returned in `Result`, is now in `Output`.
+- Added `ThrowErrorOnFailure` and `ErrorMessageOnFailure` options. When `ThrowErrorOnFailure` is disabled, failures are returned in the `Error` property of the result instead of being thrown.
+- Updated the task to target .NET 8.
+
 ## [1.3.0] - 2026-07-14
 ### Changed
 - Updated outdated repository URLs

@@ -3,9 +3,6 @@ namespace Frends.XML.SignXml.Tests;
 using Frends.XML.SignXml.Definitions;
 using NUnit.Framework;
 using NUnit.Framework.Legacy;
-using System;
-using System.IO;
-using System.Threading;
 
 [TestFixture]
 internal class UnitTests
@@ -42,9 +39,6 @@ internal class UnitTests
                 XmlInputType = XmlParamType.XmlString,
                 XmlEnvelopingType = XmlEnvelopingType.XmlEnvelopedSignature,
                 Xml = "<root><value>foo</value></root>",
-            };
-            var output = new Output
-            {
                 OutputType = XmlParamType.XmlString,
             };
             var options = new Options
@@ -54,9 +48,9 @@ internal class UnitTests
                 XmlSignatureMethod = XmlSignatureMethod.RSASHA256,
             };
 
-            var result = XML.SignXml(input, output, options, CancellationToken.None);
+            var result = XML.SignXml(input, options, CancellationToken.None);
 
-            StringAssert.Contains("<Signature", result.Result);
+            StringAssert.Contains("<Signature", result.Output);
         }
 
         [Test]
@@ -73,9 +67,6 @@ internal class UnitTests
                 XmlEnvelopingType = XmlEnvelopingType.XmlEnvelopedSignature,
                 XmlInputType = XmlParamType.File,
                 XmlFilePath = xmlFilePath,
-            };
-            var output = new Output
-            {
                 OutputType = XmlParamType.File,
                 OutputFilePath = xmlFilePath.Replace(".xml", "_signed.xml"),
                 OutputEncoding = "utf-8",
@@ -88,15 +79,15 @@ internal class UnitTests
                 PreserveWhitespace = true,
             };
 
-            var result = XML.SignXml(input, output, options, CancellationToken.None);
-            var signedXml = File.ReadAllText(result.Result);
+            var result = XML.SignXml(input, options, CancellationToken.None);
+            var signedXml = File.ReadAllText(result.Output);
 
             StringAssert.Contains("<Signature", signedXml);
             StringAssert.DoesNotContain("<Signature", File.ReadAllText(xmlFilePath));
 
             // Cleanup.
             File.Delete(xmlFilePath);
-            File.Delete(result.Result);
+            File.Delete(result.Output);
         }
 
         [Test]
@@ -113,9 +104,6 @@ internal class UnitTests
                 XmlEnvelopingType = XmlEnvelopingType.XmlEnvelopedSignature,
                 XmlInputType = XmlParamType.File,
                 XmlFilePath = xmlFilePath,
-            };
-            var output = new Output
-            {
                 OutputType = XmlParamType.File,
                 AddSignatureToSourceFile = true,
             };
@@ -127,14 +115,14 @@ internal class UnitTests
                 PreserveWhitespace = true,
             };
 
-            var result = XML.SignXml(input, output, options, CancellationToken.None);
-            var signedXml = File.ReadAllText(result.Result);
+            var result = XML.SignXml(input, options, CancellationToken.None);
+            var signedXml = File.ReadAllText(result.Output);
 
             StringAssert.Contains("<Signature", signedXml);
 
             // Cleanup.
             File.Delete(xmlFilePath);
-            File.Delete(result.Result);
+            File.Delete(result.Output);
         }
     }
 }

@@ -4,7 +4,6 @@
 ### Added
 - Added `ThrowErrorOnFailure` and `ErrorMessageOnFailure` options. By default the Task still throws on failure as before; when `ThrowErrorOnFailure` is disabled, the Task returns the failure details in the `Error` property instead.
 - Added `Success` and `Error` properties to the Task result.
-- The Task now supports cancellation.
 
 ### Changed
 - Upgraded the Task to target .NET 8.

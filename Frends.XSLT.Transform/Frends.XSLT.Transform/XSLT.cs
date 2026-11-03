@@ -23,6 +23,7 @@ public static class XSLT
     {
         using var inputStream = new MemoryStream();
         using var stringWriter = new StringWriter();
+        using var stringReader = new StringReader(input.XSLT);
 
         try
         {
@@ -31,7 +32,6 @@ public static class XSLT
             var processor = Saxon.Activation.Activator.Activate();
             var compiler = processor.NewXsltCompiler();
 
-            using var stringReader = new StringReader(input.XSLT);
             var executable = compiler.Compile(stringReader);
             var transformer = executable.Load();
 
@@ -98,6 +98,12 @@ public static class XSLT
         catch (Exception ex)
         {
             return ex.Handle(options);
+        }
+        finally
+        {
+            stringReader.Close();
+            stringWriter.Close();
+            inputStream.Close();
         }
     }
 }

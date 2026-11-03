@@ -2,8 +2,7 @@
 
 ## [3.0.0] - 2026-11-03
 ### Changed
-- **[Breaking Change]** The Task now targets .NET 8.
-- **[Breaking Change]** The Task now requires a cancellation token, which is provided automatically by the Frends Platform.
+- The Task now targets .NET 8.
 - **[Breaking Change]** Failures during XSLT compilation are now handled the same way as transformation failures, and error messages are no longer wrapped in "Error running XSLT transformation".
 
 ### Added

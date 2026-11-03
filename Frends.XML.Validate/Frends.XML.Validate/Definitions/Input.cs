@@ -9,7 +9,7 @@ public class Input
     /// XML to validate.
     /// </summary>
     /// <example>&lt;xml&gt;content&lt;/xml&gt;</example>
-    public string Xml { get; set; } = "";
+    public string Xml { get; set; } = string.Empty;
 
     /// <summary>
     /// List of XML Schema Definitions

@@ -1,3 +1,4 @@
+using System.Threading;
 using Frends.Xml.Validate.Definitions;
 using NUnit.Framework;
 using NUnit.Framework.Legacy;
@@ -58,13 +59,13 @@ public class Tests
                                        </book>
                                     </x:books>";
 
-
       var result = Xml.Validate(
           new Input { Xml = simpleXml, XsdSchemas = new[] { SimpleXsd } },
-          new Options());
+          new Options(),
+          CancellationToken.None);
       ClassicAssert.IsFalse(result.IsValid);
       ClassicAssert.IsTrue(result.Error != null &&
-                    result.Error.Contains("The element 'book' has invalid child element 'review'."));
+                    result.Error.Message.Contains("The element 'book' has invalid child element 'review'."));
    }
 
    [Test]
@@ -91,10 +92,10 @@ public class Tests
                                        </book>
                                     </x:books>";
 
-
       var result = Xml.Validate(
           new Input { Xml = simpleXml, XsdSchemas = new[] { SimpleXsd } },
-          new Options());
+          new Options(),
+          CancellationToken.None);
       ClassicAssert.IsTrue(result.IsValid);
    }
 }

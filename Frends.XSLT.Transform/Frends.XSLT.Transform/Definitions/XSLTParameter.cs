@@ -1,4 +1,4 @@
-﻿namespace Frends.XSLT.Transform.Definitions;
+namespace Frends.XSLT.Transform.Definitions;
 
 // We want to use all caps for abbreviations, but it is impossible to tell
 // SonarLint about our exceptions (e.g., XSLT).
@@ -16,7 +16,7 @@ public class XSLTParameter
     /// XSLT parameter name.
     /// </summary>
     /// <example>param1</example>
-    public string? Name
+    public string Name
     {
         get => name;
         init => name = value ?? string.Empty;
@@ -26,7 +26,7 @@ public class XSLTParameter
     /// XSLT parameter value.
     /// </summary>
     /// <example>value1</example>
-    public string? Value
+    public string Value
     {
         get => value;
         init => this.value = value ?? string.Empty;

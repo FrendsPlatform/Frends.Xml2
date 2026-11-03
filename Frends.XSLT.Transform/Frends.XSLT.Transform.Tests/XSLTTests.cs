@@ -1,12 +1,12 @@
-using Frends.XSLT.Transform.Definitions;
-using NUnit.Framework;
 using System;
 using System.IO;
+using Frends.XSLT.Transform.Definitions;
+using NUnit.Framework;
 
 namespace Frends.XSLT.Transform.Tests;
 
 [TestFixture]
-public class Tests
+public class XSLTTests
 {
     [Test]
     public void TestXsltTransform()
@@ -24,14 +24,14 @@ public class Tests
                                   </xsl:template>
                                 </xsl:stylesheet>";
 
-        var res = XSLT.Transform(new Input { XML = transformXml, XSLT = xslt }, new Options { EnableExternalEntities = false });
+        var res = XSLT.Transform(new Input { XML = transformXml, XSLT = xslt }, new Options { EnableExternalEntities = false }, CancellationToken.None);
         Assert.AreEqual(
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>Hello, World!<DIV>from <I>An XSLT Programmer</I></DIV>",
             res.XML);
     }
 
     [Test]
-     public void TestXsltTransformWithNonUTF8Declaration()
+    public void TestXsltTransformWithNonUTF8Declaration()
     {
         const string transformXml = @"<?xml version=""1.0"" encoding=""Windows-1252"" ?><in>Ä</in>";
 
@@ -43,7 +43,7 @@ public class Tests
                                   </xsl:template>
                                 </xsl:stylesheet>";
 
-        var res = XSLT.Transform(new Input { XML = transformXml, XSLT = xslt }, new Options { EnableExternalEntities = false });
+        var res = XSLT.Transform(new Input { XML = transformXml, XSLT = xslt }, new Options { EnableExternalEntities = false }, CancellationToken.None);
         Assert.AreEqual(
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?><out>Ä</out>",
             res.XML);
@@ -62,7 +62,7 @@ public class Tests
                                   </xsl:template>
                                 </xsl:stylesheet>";
 
-        var res = XSLT.Transform(new Input { XML = transformXml, XSLT = xslt }, new Options { EnableExternalEntities = false });
+        var res = XSLT.Transform(new Input { XML = transformXml, XSLT = xslt }, new Options { EnableExternalEntities = false }, CancellationToken.None);
 
         Assert.AreEqual(
             string.Format("<?xml version=\"1.0\" encoding=\"UTF-8\"?><out>foo  {0}{0}bar</out>", Environment.NewLine),
@@ -88,14 +88,15 @@ public class Tests
             {
                 XML = transformXml,
                 XSLT = xslt,
-                XSLTParameters = new XSLTParameter[] { new XSLTParameter { Name = "param", Value = "foo" } }
-            }, new Options { EnableExternalEntities = false });
+                XSLTParameters = new XSLTParameter[] { new XSLTParameter { Name = "param", Value = "foo" } },
+            },
+            new Options { EnableExternalEntities = false },
+            CancellationToken.None);
 
         Assert.AreEqual(
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?><out>foo</out>",
             res.XML);
     }
-
 
     [Test]
     public void TestXsltTransformWithNullParam()
@@ -116,9 +117,14 @@ public class Tests
             {
                 XML = transformXml,
                 XSLT = xslt,
-                XSLTParameters = new XSLTParameter[] { new()
-                    { Name = "param", Value = null } },
-            }, new Options { EnableExternalEntities = false });
+                XSLTParameters = new XSLTParameter[]
+                {
+                    new()
+                    { Name = "param", Value = null },
+                },
+            },
+            new Options { EnableExternalEntities = false },
+            CancellationToken.None);
 
         Assert.AreEqual(
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?><out/>",
@@ -138,13 +144,12 @@ public class Tests
                                   </xsl:template>
                                 </xsl:stylesheet>";
 
-        var res = XSLT.Transform(new Input { XML = transformXml, XSLT = xslt }, new Options { EnableExternalEntities = false });
+        var res = XSLT.Transform(new Input { XML = transformXml, XSLT = xslt }, new Options { EnableExternalEntities = false }, CancellationToken.None);
 
-        Assert.AreEqual( // no newline caused by empty tag
+        Assert.AreEqual(// no newline caused by empty tag
             @"<?xml version=""1.0"" encoding=""UTF-8""?>",
             res.XML);
     }
-
 
     [Test]
     public void Transform_ShouldNotResolveExternalEntities()
@@ -165,17 +170,17 @@ public class Tests
         var input = new Input
         {
             XML = xmlWithExternalEntity,
-            XSLT = xslt
+            XSLT = xslt,
         };
 
         var options = new Options
         {
-            EnableExternalEntities = false
+            EnableExternalEntities = false,
         };
 
-        var result = XSLT.Transform(input, options);
+        var result = XSLT.Transform(input, options, CancellationToken.None);
 
-        Assert.IsFalse(result.XML?.Contains("/etc/passwd"), "The external entity should not resolve to its system value.");
+        Assert.IsFalse(result.XML.Contains("/etc/passwd"), "The external entity should not resolve to its system value.");
     }
 
     [Test]
@@ -206,12 +211,12 @@ public class Tests
 
         var options = new Options
         {
-            EnableExternalEntities = true
+            EnableExternalEntities = true,
         };
 
-        var result = XSLT.Transform(input, options);
+        var result = XSLT.Transform(input, options, CancellationToken.None);
 
-        Assert.IsTrue(result.XML?.Contains(externalEntityContent), "The external entity content should be included in the transformed XML.");
+        Assert.IsTrue(result.XML.Contains(externalEntityContent), "The external entity content should be included in the transformed XML.");
 
         File.Delete(tempFilePath);
     }
@@ -235,15 +240,18 @@ public class Tests
 
         var result = XSLT.Transform(
             new Input { XML = inputXml, XSLT = xsltWithDocument },
-            new Options { EnableExternalEntities = true }
-        );
+            new Options { EnableExternalEntities = true },
+            CancellationToken.None);
 
-        Assert.DoesNotThrow(() => {
-            using (FileStream fs = new FileStream(externalFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+        Assert.DoesNotThrow(
+            () =>
             {
-                fs.WriteByte(0);
-            }
-        }, "file blocked");
+                using (FileStream fs = new FileStream(externalFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                {
+                    fs.WriteByte(0);
+                }
+            },
+            "file blocked");
 
         if (File.Exists(externalFilePath)) File.Delete(externalFilePath);
     }
@@ -266,14 +274,41 @@ public class Tests
 
             var result = XSLT.Transform(
                 new Input { XML = "<root/>", XSLT = xslt },
-                new Options { EnableExternalEntities = true }
-            );
+                new Options { EnableExternalEntities = true },
+                CancellationToken.None);
 
             Assert.That(result.XML, Contains.Substring("<fallback>works</fallback>"));
         }
         finally
         {
-            try { if (File.Exists(fullPath)) File.Delete(fullPath); } catch { }
+            try
+            {
+                if (File.Exists(fullPath)) File.Delete(fullPath);
+            }
+            catch
+            {
+            }
         }
+    }
+
+    [Test]
+    public void Transform_ShouldReturnErrorResult_WhenThrowErrorOnFailureIsFalse()
+    {
+        var result = XSLT.Transform(
+            new Input { XML = "<root/>", XSLT = "not xslt" },
+            new Options { ThrowErrorOnFailure = false },
+            CancellationToken.None);
+
+        Assert.IsFalse(result.Success);
+        Assert.IsNotNull(result.Error);
+    }
+
+    [Test]
+    public void Transform_ShouldThrow_WhenThrowErrorOnFailureIsTrue()
+    {
+        Assert.Catch(() => XSLT.Transform(
+            new Input { XML = "<root/>", XSLT = "not xslt" },
+            new Options(),
+            CancellationToken.None));
     }
 }

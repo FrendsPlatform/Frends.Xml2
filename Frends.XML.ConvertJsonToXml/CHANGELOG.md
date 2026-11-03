@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0] - 2026-11-03
+### Changed
+- **[Breaking Change]** Added `Options` and `CancellationToken` parameters to the Task.
+- **[Breaking Change]** The Task result now includes `Success` and `Error` properties.
+- Added `ThrowErrorOnFailure` and `ErrorMessageOnFailure` options for controlling error handling.
+- Upgraded the Task to target .NET 8.
+
 ## [1.2.0] - 2026-07-14
 ### Changed
 - Updated outdated repository URLs

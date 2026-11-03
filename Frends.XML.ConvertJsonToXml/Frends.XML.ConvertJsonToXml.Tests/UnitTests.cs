@@ -1,21 +1,22 @@
 namespace Frends.XML.ConvertJsonToXml.Tests;
 
-using Newtonsoft.Json;
 using Frends.XML.ConvertJsonToXml.Definitions;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using NUnit.Framework.Legacy;
 
 [TestFixture]
 internal class UnitTests
 {
-    private string _json;
-    private string _complexJson;
-    private Input _input;
+    private string json;
+    private string complexJson;
+    private Input input;
+    private Options options = new Options();
 
     [SetUp]
     public void Setup()
     {
-        _json = @"
+        json = @"
 {
     '?xml': {
         '@version': '1.0',
@@ -36,7 +37,7 @@ internal class UnitTests
         ]
     }
 }";
-        _complexJson = @"{
+        complexJson = @"{
             ""?xml"": {
                 ""@version"": ""1.0"",
                 ""@standalone"": ""no""
@@ -63,9 +64,9 @@ internal class UnitTests
             }
         }";
 
-        _input = new Input()
+        input = new Input()
         {
-            Json = _json,
+            Json = json,
             XmlRootElementName = string.Empty,
             IncludeXmlDeclaration = true,
         };
@@ -74,7 +75,7 @@ internal class UnitTests
     [Test]
     public void ConvertJsonToXml()
     {
-        var result = XML.ConvertJsonToXml(_input);
+        var result = XML.ConvertJsonToXml(input, options, CancellationToken.None);
         ClassicAssert.IsTrue(result.Xml.Contains("<url>http://www.google.com</url>"));
         ClassicAssert.IsTrue(result.Xml.Contains(@"<?xml version=""1.0"" standalone=""no""?>"));
         ClassicAssert.IsTrue(result.Xml.Contains(@"<person id=""1"">"));
@@ -84,8 +85,8 @@ internal class UnitTests
     [Test]
     public void ConvertJsonToXmlWithNewRootElement()
     {
-        _input.XmlRootElementName = "newRoot";
-        var result = XML.ConvertJsonToXml(_input);
+        input.XmlRootElementName = "newRoot";
+        var result = XML.ConvertJsonToXml(input, options, CancellationToken.None);
         ClassicAssert.IsTrue(result.Xml.Contains("<url>http://www.google.com</url>"));
         ClassicAssert.IsTrue(result.Xml.Contains(@"<?xml version=""1.0"" standalone=""no""?>"));
     }
@@ -93,24 +94,24 @@ internal class UnitTests
     [Test]
     public void ConvertJsonToXmlWithoutXmlDeclaration()
     {
-        _input.IncludeXmlDeclaration = false;
-        var result = XML.ConvertJsonToXml(_input);
+        input.IncludeXmlDeclaration = false;
+        var result = XML.ConvertJsonToXml(input, options, CancellationToken.None);
         ClassicAssert.IsFalse(result.Xml.Contains(@"<?xml version=""1.0"" standalone=""no""?>"));
     }
 
     [Test]
     public void ConvertJsonToXmlWithXmlDeclarationNoNewRoot()
     {
-        var result = XML.ConvertJsonToXml(_input);
+        var result = XML.ConvertJsonToXml(input, options, CancellationToken.None);
         ClassicAssert.IsTrue(result.Xml.Contains(@"<?xml version=""1.0"" standalone=""no""?>"));
     }
 
     [Test]
     public void ConvertJsonToXmlWithoutXmlDeclarationAndWithNewRootElement()
     {
-        _input.IncludeXmlDeclaration = false;
-        _input.XmlRootElementName = "newRoot";
-        var result = XML.ConvertJsonToXml(_input);
+        input.IncludeXmlDeclaration = false;
+        input.XmlRootElementName = "newRoot";
+        var result = XML.ConvertJsonToXml(input, options, CancellationToken.None);
         ClassicAssert.IsFalse(result.Xml.Contains(@"<?xml version=""1.0"" standalone=""no""?>"));
         ClassicAssert.IsTrue(result.Xml.StartsWith("<newRoot>"));
     }
@@ -119,9 +120,9 @@ internal class UnitTests
     public void ConvertJsonToXmlWithSimpleXml()
     {
         var json = @"{""name"": ""Matt"", ""address"": ""Street 1""}";
-        _input.Json = json;
-        _input.XmlRootElementName = "root";
-        var result = XML.ConvertJsonToXml(_input);
+        input.Json = json;
+        input.XmlRootElementName = "root";
+        var result = XML.ConvertJsonToXml(input, options, CancellationToken.None);
         ClassicAssert.IsTrue(result.Xml.Contains("<name>Matt</name>"));
         ClassicAssert.IsTrue(result.Xml.Contains("<address>Street 1</address>"));
         ClassicAssert.IsTrue(result.Xml.Contains(@"<?xml version=""1.0""?>"));
@@ -131,48 +132,48 @@ internal class UnitTests
     public void ConvertJsonToXmlWithSimpleXmlWithoutNewRootElementShouldThrow()
     {
         var json = @"{""name"": ""Matt"", ""address"": ""Street 1""}";
-        _input.Json = json;
-        var ex = Assert.Throws<JsonSerializationException>(() => XML.ConvertJsonToXml(_input));
+        input.Json = json;
+        var ex = Assert.Throws<JsonSerializationException>(() => XML.ConvertJsonToXml(input, options, CancellationToken.None));
         ClassicAssert.AreEqual("JSON root object has multiple properties. The root object must have a single property in order to create a valid XML document. Consider specifying a DeserializeRootElementName. Path 'address', line 3, position 12.", ex.Message);
     }
 
     [Test]
     public void ConvertJsonToXmlWithComplexJson()
     {
-        _input.Json = _complexJson;
+        input.Json = complexJson;
 
-        var result = XML.ConvertJsonToXml(_input);
+        var result = XML.ConvertJsonToXml(input, options, CancellationToken.None);
         ClassicAssert.IsTrue(result.Xml.Contains(@"<?xml version=""1.0"" standalone=""no""?>"));
     }
 
     [Test]
     public void ConvertJsonToXmlWithComplexJsonWithNewRootElement()
     {
-        _input.XmlRootElementName = "root";
-        _input.Json = _complexJson;
+        input.XmlRootElementName = "root";
+        input.Json = complexJson;
 
-        var result = XML.ConvertJsonToXml(_input);
+        var result = XML.ConvertJsonToXml(input, options, CancellationToken.None);
         ClassicAssert.IsTrue(result.Xml.Contains(@"<?xml version=""1.0"" standalone=""no""?>"));
     }
 
     [Test]
     public void ConvertJsonToXmlWithComplexJsonWithoutDeclaration()
     {
-        _input.Json = _complexJson;
-        _input.IncludeXmlDeclaration = false;
+        input.Json = complexJson;
+        input.IncludeXmlDeclaration = false;
 
-        var result = XML.ConvertJsonToXml(_input);
+        var result = XML.ConvertJsonToXml(input, options, CancellationToken.None);
         ClassicAssert.IsFalse(result.Xml.Contains(@"<?xml version=""1.0"" standalone=""no""?>"));
     }
 
     [Test]
     public void ConvertJsonToXmlWithComplexJsonWithNewRootElementWithoutDeclaration()
     {
-        _input.XmlRootElementName = "root";
-        _input.Json = _complexJson;
-        _input.IncludeXmlDeclaration = false;
+        input.XmlRootElementName = "root";
+        input.Json = complexJson;
+        input.IncludeXmlDeclaration = false;
 
-        var result = XML.ConvertJsonToXml(_input);
+        var result = XML.ConvertJsonToXml(input, options, CancellationToken.None);
         ClassicAssert.IsFalse(result.Xml.Contains(@"<?xml version=""1.0"" standalone=""no""?>"));
     }
 }

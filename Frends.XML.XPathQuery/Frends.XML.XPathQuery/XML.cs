@@ -1,8 +1,10 @@
-﻿using System.ComponentModel;
-using Frends.XML.XPathQuery.Definitions;
-using Saxon.Api;
+using System.ComponentModel;
 using System.Text;
 using System.Xml;
+using Frends.XML.XPathQuery.Definitions;
+using Frends.XML.XPathQuery.Helpers;
+using Newtonsoft.Json.Linq;
+using Saxon.Api;
 using LocalSchemaValidationMode = Frends.XML.XPathQuery.Definitions.SchemaValidationMode;
 using SaxonSchemaValidationMode = Saxon.Api.SchemaValidationMode;
 
@@ -29,26 +31,57 @@ public static class XML
     /// </summary>
     /// <param name="input">Input definition.</param>
     /// <param name="options">Query options.</param>
-    /// <returns>Object { List&lt;dynamic&gt; Data }</returns>
-    /// <example>{
-    ///     "Data": [
-    ///         "value123",
-    ///         546,
-    ///         true,
-    ///         { "someObject": "hello" }
-    ///     ]
-    /// }</example>
+    /// <param name="cancellationToken">A cancellation token provided by Frends Platform.</param>
+    /// <returns>object { bool Success, List&lt;dynamic&gt; Data, object Error { string Message, Exception AdditionalInfo } }</returns>
     public static Result XPathQuery(
-        [PropertyTab] Input input, [PropertyTab] Options options)
+        [PropertyTab] Input input,
+        [PropertyTab] Options options,
+        CancellationToken cancellationToken)
     {
-        var processor = Saxon.Activation.Activator.Activate();
-        var xPathSelector = SetupXPathSelector(processor, input, options);
-        var result = xPathSelector.Evaluate().GetList();
+        try
+        {
+            cancellationToken.ThrowIfCancellationRequested();
 
-        if (options.ThrowErrorOnEmptyResults && !result.Any())
-            throw new InvalidDataException($"Could not find any nodes with XPath: {input.XPathQuery}");
+            var processor = Saxon.Activation.Activator.Activate();
+            var xPathSelector = SetupXPathSelector(processor, input, options);
+            var result = xPathSelector.Evaluate().GetList();
 
-        return new Result(result, options.ReturnRawXmlForNonAtomicValues);
+            if (options.ThrowErrorOnEmptyResults && !result.Any())
+                throw new InvalidDataException($"Could not find any nodes with XPath: {input.XPathQuery}");
+
+            return new Result
+            {
+                Success = true,
+                Data = options.ReturnRawXmlForNonAtomicValues
+                    ? result.Select(GetXmlOrAtomicObject).ToList()
+                    : result.Select(GetJTokenFromXdmItem).ToList(),
+                Error = null,
+            };
+        }
+        catch (Exception ex)
+        {
+            return ex.Handle(options);
+        }
+    }
+
+    private static object GetXmlOrAtomicObject(XdmItem item)
+    {
+        return item is XdmAtomicValue xdmAtomicValue ? xdmAtomicValue.Value : item.ToString();
+    }
+
+    private static object GetJTokenFromXdmItem(XdmItem xdmItem)
+    {
+        if (xdmItem is XdmAtomicValue xdmAtomicValue)
+            return xdmAtomicValue.Value;
+
+        // Saxon does not treat "text()" results as atomic types, so we need to manually
+        // check for text nodes. This makes queries like /something/text() work properly.
+        if (xdmItem is XdmNode xdmNode && xdmNode.NodeType == XmlNodeType.Text)
+            return xdmNode.StringValue;
+
+        var output = new XmlDocument();
+        output.LoadXml(xdmItem.ToString());
+        return JToken.FromObject(output);
     }
 
     private static XPathSelector SetupXPathSelector(
@@ -78,6 +111,7 @@ public static class XML
         }
 
         var xPathSelector = xPathCompiler.Compile(input.XPathQuery).Load();
+
         // Warning disabled because we cannot do anything else, since we are not handling a
         // real file from disk. It is all purely in memory.
 #pragma warning disable S1075 // URIs should not be hardcoded

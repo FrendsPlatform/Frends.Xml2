@@ -1,6 +1,5 @@
 using Frends.XML.XPathQuery.Definitions;
 using NUnit.Framework;
-using System.IO;
 
 namespace Frends.XML.XPathQuery.Tests;
 
@@ -40,7 +39,8 @@ public class XMLTests
         const string xPath = "/bookstore/book/price/things";
         var res = XML.XPathQuery(
             new Input() { XML = Xml, XPathQuery = xPath },
-            new Options() { ThrowErrorOnEmptyResults = false, ReturnRawXmlForNonAtomicValues = false });
+            new Options() { ThrowErrorOnEmptyResults = false, ReturnRawXmlForNonAtomicValues = false },
+            CancellationToken.None);
 
         Assert.AreEqual(0, res.Data.Count);
     }
@@ -52,9 +52,23 @@ public class XMLTests
         var exception = Assert.Throws<InvalidDataException>(() =>
             XML.XPathQuery(
                 new Input() { XML = Xml, XPathQuery = xPath },
-                new Options() { ThrowErrorOnEmptyResults = true, ReturnRawXmlForNonAtomicValues = false }));
+                new Options() { ThrowErrorOnEmptyResults = true, ReturnRawXmlForNonAtomicValues = false },
+                CancellationToken.None));
 
         Assert.IsTrue(exception?.Message.Contains("Could not find any nodes with XPath"));
+    }
+
+    [Test]
+    public void TestXPathQueryNoResultsFoundReturnsErrorWhenThrowErrorOnFailureIsFalse()
+    {
+        const string xPath = "/bookstore/book/price/things";
+        var res = XML.XPathQuery(
+            new Input() { XML = Xml, XPathQuery = xPath },
+            new Options() { ThrowErrorOnFailure = false, ErrorMessageOnFailure = "Custom" },
+            CancellationToken.None);
+
+        Assert.IsFalse(res.Success);
+        Assert.IsTrue(res.Error.Message.StartsWith("Custom: Could not find any nodes with XPath"));
     }
 
     [Test]
@@ -63,7 +77,8 @@ public class XMLTests
         const string xPath = "/bookstore/book/price/string()";
         var res = XML.XPathQuery(
             new Input() { XML = Xml, XPathQuery = xPath },
-            new Options());
+            new Options(),
+            CancellationToken.None);
 
         Assert.AreEqual(3, res.Data.Count);
         Assert.AreEqual("8.99", res.Data[0]);
@@ -77,7 +92,8 @@ public class XMLTests
         const string xPath = "/bookstore/book[1]/price/text()";
         var res = XML.XPathQuery(
             new Input() { XML = Xml, XPathQuery = xPath },
-            new Options());
+            new Options(),
+            CancellationToken.None);
 
         Assert.AreEqual("8.99", res.Data[0]);
     }
@@ -88,7 +104,8 @@ public class XMLTests
         const string xPath = "xs:double(/bookstore/book[1]/price/text())";
         var res = XML.XPathQuery(
             new Input() { XML = Xml, XPathQuery = xPath },
-            new Options());
+            new Options(),
+            CancellationToken.None);
 
         Assert.AreEqual(8.99d, res.Data[0], 0.001d);
     }
@@ -99,7 +116,8 @@ public class XMLTests
         const string xPath = "/bookstore/book/price";
         var res = XML.XPathQuery(
             new Input() { XML = Xml, XPathQuery = xPath },
-            new Options());
+            new Options(),
+            CancellationToken.None);
 
         Assert.AreEqual(8.99d, (double)res.Data[0].price);
         Assert.AreEqual(11.99d, (double)res.Data[1].price);
@@ -112,7 +130,8 @@ public class XMLTests
         const string xPath = "/bookstore/book/price";
         var res = XML.XPathQuery(
             new Input() { XML = Xml, XPathQuery = xPath },
-            new Options() { ThrowErrorOnEmptyResults = true, ReturnRawXmlForNonAtomicValues = true });
+            new Options() { ThrowErrorOnEmptyResults = true, ReturnRawXmlForNonAtomicValues = true },
+            CancellationToken.None);
 
         Assert.AreEqual(3, res.Data.Count);
         Assert.AreEqual("<price>8.99</price>", res.Data[0]);
@@ -132,8 +151,9 @@ public class XMLTests
                 ThrowErrorOnEmptyResults = true,
                 ReturnRawXmlForNonAtomicValues = true,
                 SchemaAware = true,
-                SchemaValidationMode = SchemaValidationMode.None
-            });
+                SchemaValidationMode = SchemaValidationMode.None,
+            },
+            CancellationToken.None);
 
         Assert.AreEqual(1, res.Data.Count);
         Assert.AreEqual("5", res.Data[0]);
@@ -161,7 +181,8 @@ public class XMLTests
                 SchemaAware = true,
                 SchemaValidationMode = SchemaValidationMode.None,
                 EnableExternalEntities = true,
-            });
+            },
+            CancellationToken.None);
 
         Assert.That(res.Data[0] is string result && result.Contains("I LOVE DONUTS"), Is.True, res.Data[0]);
     }
@@ -188,7 +209,8 @@ public class XMLTests
                 SchemaAware = true,
                 SchemaValidationMode = SchemaValidationMode.None,
                 EnableExternalEntities = false,
-            });
+            },
+            CancellationToken.None);
 
         Assert.That(res.Data[0] is string result && result.Contains("I LOVE DONUTS"), Is.False, res.Data[0]);
     }

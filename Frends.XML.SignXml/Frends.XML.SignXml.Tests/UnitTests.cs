@@ -13,19 +13,26 @@ internal class UnitTests
 #endif
     public class SigningTaskTest
     {
-        private readonly string certificatePath = Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "TestFiles", "certwithpk.pfx");
         private readonly string privateKeyPassword = "password";
+        private string workingDirectory;
+        private string certificatePath;
 
         [SetUp]
         public void Setup()
         {
+            workingDirectory = Path.Combine(Path.GetTempPath(), "Frends.XML.SignXml.Tests", Guid.NewGuid().ToString());
+            Directory.CreateDirectory(workingDirectory);
+            certificatePath = Path.Combine(workingDirectory, "certwithpk.pfx");
             TestFiles.CreateSignatureFile.GenerateSignatureFile(certificatePath, privateKeyPassword);
         }
 
         [TearDown]
         public void Down()
         {
-            File.Delete(certificatePath);
+            if (Directory.Exists(workingDirectory))
+            {
+                Directory.Delete(workingDirectory, true);
+            }
         }
 
         [Test]
@@ -57,7 +64,7 @@ internal class UnitTests
         public void SignXml_ShouldSignXmlFileWithPrivateKeyCertificate()
         {
             // Create file.
-            var xmlFilePath = Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "TestFiles", Guid.NewGuid().ToString() + ".xml");
+            var xmlFilePath = Path.Combine(workingDirectory, Guid.NewGuid().ToString() + ".xml");
             File.WriteAllText(xmlFilePath, @"<root><value>foo</value></root>");
             var input = new Input
             {
@@ -94,7 +101,7 @@ internal class UnitTests
         public void SignXml_ShouldAddSignatureToSourceFile()
         {
             // Create file.
-            var xmlFilePath = Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "TestFiles", Guid.NewGuid().ToString() + ".xml");
+            var xmlFilePath = Path.Combine(workingDirectory, Guid.NewGuid().ToString() + ".xml");
             File.WriteAllText(xmlFilePath, @"<root><value>foo</value></root>");
             var input = new Input
             {

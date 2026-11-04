@@ -1,5 +1,6 @@
 using Frends.XML.XPathQuery.Definitions;
 using NUnit.Framework;
+using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
 namespace Frends.XML.XPathQuery.Tests;
 

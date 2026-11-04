@@ -60,6 +60,105 @@ internal class UnitTests
             StringAssert.Contains("<Signature", result.Output);
         }
 
+        [TestCase(XmlSignatureMethod.RSASHA1, DigestMethod.SHA1)]
+        [TestCase(XmlSignatureMethod.RSASHA384, DigestMethod.SHA384)]
+        [TestCase(XmlSignatureMethod.RSASHA512, DigestMethod.SHA512)]
+        public void SignXml_ShouldSupportSignatureAndDigestAlgorithms(XmlSignatureMethod signatureMethod, DigestMethod digestMethod)
+        {
+            var input = new Input
+            {
+                CertificatePath = certificatePath,
+                PrivateKeyPassword = privateKeyPassword,
+                SigningStrategy = SigningStrategyType.PrivateKeyCertificate,
+                XmlInputType = XmlParamType.XmlString,
+                Xml = "<root><value>foo</value></root>",
+                OutputType = XmlParamType.XmlString,
+            };
+            var options = new Options
+            {
+                DigestMethod = digestMethod,
+                XmlSignatureMethod = signatureMethod,
+            };
+
+            var result = XML.SignXml(input, options, CancellationToken.None);
+
+            Assert.That(result.Success, Is.True);
+            StringAssert.Contains("<Signature", result.Output);
+        }
+
+        [TestCase(TransformMethod.DsigBase64)]
+        [TestCase(TransformMethod.DsigC14)]
+        [TestCase(TransformMethod.DsigC14WithComments)]
+        [TestCase(TransformMethod.DsigExcC14WithComments)]
+        public void SignXml_ShouldSupportTransformMethods(TransformMethod transformMethod)
+        {
+            var input = new Input
+            {
+                CertificatePath = certificatePath,
+                PrivateKeyPassword = privateKeyPassword,
+                SigningStrategy = SigningStrategyType.PrivateKeyCertificate,
+                XmlInputType = XmlParamType.XmlString,
+                Xml = "<root><value>foo</value></root>",
+                OutputType = XmlParamType.XmlString,
+            };
+            var options = new Options
+            {
+                DigestMethod = DigestMethod.SHA256,
+                TransformMethods = new[] { transformMethod },
+                XmlSignatureMethod = XmlSignatureMethod.RSASHA256,
+            };
+
+            var result = XML.SignXml(input, options, CancellationToken.None);
+
+            Assert.That(result.Success, Is.True);
+            StringAssert.Contains("<Signature", result.Output);
+        }
+
+        [Test]
+        public void SignXml_ShouldReturnFailureWhenInvalidXmlAndThrowingIsDisabled()
+        {
+            var input = new Input
+            {
+                XmlInputType = XmlParamType.XmlString,
+                Xml = " ",
+                OutputType = XmlParamType.XmlString,
+            };
+            var options = new Options
+            {
+                ThrowErrorOnFailure = false,
+            };
+
+            var result = XML.SignXml(input, options, CancellationToken.None);
+
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.Error.Message, Is.EqualTo("Invalid input xml"));
+            Assert.That(result.Error.AdditionalInfo, Is.TypeOf<ArgumentException>());
+        }
+
+        [Test]
+        public void SignXml_ShouldThrowWhenCancellationIsRequested()
+        {
+            var input = new Input
+            {
+                CertificatePath = certificatePath,
+                PrivateKeyPassword = privateKeyPassword,
+                SigningStrategy = SigningStrategyType.PrivateKeyCertificate,
+                XmlInputType = XmlParamType.XmlString,
+                Xml = "<root><value>foo</value></root>",
+                OutputType = XmlParamType.XmlString,
+            };
+            var options = new Options
+            {
+                DigestMethod = DigestMethod.SHA256,
+                TransformMethods = new[] { TransformMethod.DsigExcC14 },
+                XmlSignatureMethod = XmlSignatureMethod.RSASHA256,
+            };
+            using var cancellationSource = new CancellationTokenSource();
+            cancellationSource.Cancel();
+
+            Assert.Throws<OperationCanceledException>(() => XML.SignXml(input, options, cancellationSource.Token));
+        }
+
         [Test]
         public void SignXml_ShouldSignXmlFileWithPrivateKeyCertificate()
         {

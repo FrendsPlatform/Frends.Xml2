@@ -1,4 +1,4 @@
-namespace Frends.Xml.Validate.Definitions;
+﻿namespace Frends.Xml.Validate.Definitions;
 
 /// <summary>
 /// Validate task result.

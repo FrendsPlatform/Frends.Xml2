@@ -16,9 +16,9 @@ public class Tests
 
                                       <xsd:complexType name=""BooksForm"">
                                         <xsd:sequence>
-                                          <xsd:element name=""book"" 
-                                                      type=""bks:BookForm"" 
-                                                      minOccurs=""0"" 
+                                          <xsd:element name=""book""
+                                                      type=""bks:BookForm""
+                                                      minOccurs=""0""
                                                       maxOccurs=""unbounded""/>
                                           </xsd:sequence>
                                       </xsd:complexType>
@@ -64,8 +64,32 @@ public class Tests
           new Options(),
           CancellationToken.None);
       ClassicAssert.IsFalse(result.IsValid);
+      ClassicAssert.IsTrue(result.Success);
       ClassicAssert.IsTrue(result.Error != null &&
                     result.Error.Message.Contains("The element 'book' has invalid child element 'review'."));
+   }
+
+   [Test]
+   public void TestValidationErrorIsReturnedWhenThrowingIsDisabled()
+   {
+      const string schema = @"<xs:schema xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
+                                <xs:element name=""root"">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name=""value"" type=""xs:string""/>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:schema>";
+
+      var result = Xml.Validate(
+          new Input { Xml = "<root />", XsdSchemas = new[] { schema } },
+          new Options { ThrowOnValidationErrors = true, ThrowErrorOnFailure = false },
+          CancellationToken.None);
+
+      ClassicAssert.IsFalse(result.Success);
+      ClassicAssert.IsFalse(result.IsValid);
+      ClassicAssert.IsNotNull(result.Error);
    }
 
    [Test]

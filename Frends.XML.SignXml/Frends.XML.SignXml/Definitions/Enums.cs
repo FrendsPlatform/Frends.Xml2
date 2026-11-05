@@ -1,4 +1,4 @@
-﻿namespace Frends.XML.SignXml.Definitions;
+namespace Frends.XML.SignXml.Definitions;
 
 using System;
 

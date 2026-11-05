@@ -1,4 +1,4 @@
-﻿namespace Frends.XML.SignXml.Tests.TestFiles;
+namespace Frends.XML.SignXml.Tests.TestFiles;
 
 using System;
 using System.IO;

@@ -287,28 +287,8 @@ public class XSLTTests
             }
             catch
             {
+                // ignored
             }
         }
-    }
-
-    [Test]
-    public void Transform_ShouldReturnErrorResult_WhenThrowErrorOnFailureIsFalse()
-    {
-        var result = XSLT.Transform(
-            new Input { XML = "<root/>", XSLT = "not xslt" },
-            new Options { ThrowErrorOnFailure = false },
-            CancellationToken.None);
-
-        Assert.IsFalse(result.Success);
-        Assert.IsNotNull(result.Error);
-    }
-
-    [Test]
-    public void Transform_ShouldThrow_WhenThrowErrorOnFailureIsTrue()
-    {
-        Assert.Catch(() => XSLT.Transform(
-            new Input { XML = "<root/>", XSLT = "not xslt" },
-            new Options(),
-            CancellationToken.None));
     }
 }

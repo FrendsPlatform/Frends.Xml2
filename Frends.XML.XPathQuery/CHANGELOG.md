@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.0] - 2026-11-03
+### Added
+- Added `ThrowErrorOnFailure` and `ErrorMessageOnFailure` options. By default the Task still throws on failure as before; when `ThrowErrorOnFailure` is disabled, the Task returns the failure details in the `Error` property instead.
+- Added `Success` and `Error` properties to the Task result.
+
+### Changed
+- Upgraded the Task to target .NET 8.
+
 ## [2.2.0] - 2026-07-14
 ### Changed
 - Updated outdated repository URLs

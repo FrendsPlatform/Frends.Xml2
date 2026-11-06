@@ -18,8 +18,8 @@ public class Options
     public bool ThrowOnValidationErrors { get; set; }
 
     /// <summary>
-    /// Controls whether task exceptions are thrown or returned in a failed result. This applies to validation
-    /// errors only when ThrowOnValidationErrors is true. When ThrowOnValidationErrors is false, validation
+    /// Controls whether task exceptions are thrown or returned in a failed result. If set to false, result has Success set to false and error stored in Error property. 
+    /// This applies to validation errors only when ThrowOnValidationErrors is true. When ThrowOnValidationErrors is false, validation
     /// errors are returned in the result without throwing, regardless of this option.
     /// </summary>
     /// <example>true</example>

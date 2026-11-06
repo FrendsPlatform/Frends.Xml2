@@ -6,15 +6,20 @@
 public class Result
 {
     /// <summary>
+    /// Indicates if the task completed successfully.
+    /// </summary>
+    /// <example>true</example>
+    public bool Success { get; set; }
+
+    /// <summary>
     /// Result of XML validation.
     /// </summary>
     /// <example>true</example>
-    public bool IsValid { get; internal set; }
+    public bool IsValid { get; set; }
 
     /// <summary>
-    /// Validation error message, if any.
+    /// Error that occurred during task execution or validation.
     /// </summary>
-    /// <example>The element 'book' has invalid child element 'review'.
-    /// </example>
-    public string? Error { get; internal set; }
+    /// <example>object { string Message, Exception AdditionalInfo }</example>
+    public Error? Error { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿namespace Frends.XSLT.Transform.Definitions;
+namespace Frends.XSLT.Transform.Definitions;
 
 /// <summary>
 /// Transform task input.
@@ -9,7 +9,7 @@ public class Input
     /// XML to transform.
     /// </summary>
     /// <example><xml>...</xml></example>
-    public string XML { get; set; } = "";
+    public string XML { get; set; } = string.Empty;
 
     /// <summary>
     /// XSLT transformation. The XSLT version (1.0, 2.0, or 3.0) is determined by the version attribute in the stylesheet element. The version attribute is required.
@@ -21,7 +21,7 @@ public class Input
     ///   &lt;/xsl:template&gt;
     /// &lt;/xsl:stylesheet&gt;
     /// </example>
-    public string XSLT { get; set; } = "";
+    public string XSLT { get; set; } = string.Empty;
 
     /// <summary>
     /// XSLT parameters.

@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.0.0] - 2026-11-03
+### Changed
+- The Task now targets .NET 8.
+- **[Breaking Change]** Failures during XSLT compilation are now handled the same way as transformation failures, and error messages are no longer wrapped in "Error running XSLT transformation".
+
+### Added
+- Added `Success` and `Error` properties to the Task result.
+- Added `ThrowErrorOnFailure` and `ErrorMessageOnFailure` options. By default the Task still throws on failure.
+
 ## [2.4.0] - 2026-07-14
 ### Changed
 - Updated outdated repository URLs

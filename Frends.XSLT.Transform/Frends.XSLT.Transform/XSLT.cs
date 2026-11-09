@@ -1,13 +1,10 @@
-﻿using Frends.XSLT.Transform.Definitions;
-using Saxon.Api;
 using System.ComponentModel;
 using System.Xml;
+using Frends.XSLT.Transform.Definitions;
+using Frends.XSLT.Transform.Helpers;
+using Saxon.Api;
 
 namespace Frends.XSLT.Transform;
-
-// We want to use all caps for abbreviations, but it is impossible to tell
-// SonarLint about our exceptions (e.g. XSLT).
-// Thus we disable this with pragma until SonarLint has an exception word list.
 
 /// <summary>
 /// Frends task for transforming XML with XSLT.
@@ -20,34 +17,38 @@ public static class XSLT
     /// </summary>
     /// <param name="input">Input definition.</param>
     /// <param name="options">Optional parameters.</param>
-    /// <returns>Object { string XML }</returns>
-    public static Result Transform([PropertyTab] Input input, [PropertyTab] Options options)
+    /// <param name="cancellationToken">A cancellation token provided by Frends Platform.</param>
+    /// <returns>object { bool Success, string XML, object Error { string Message, Exception AdditionalInfo } }</returns>
+    public static Result Transform([PropertyTab] Input input, [PropertyTab] Options options, CancellationToken cancellationToken)
     {
-        var processor = Saxon.Activation.Activator.Activate();
-        var compiler = processor.NewXsltCompiler();
-
-        using var stringReader = new StringReader(input.XSLT);
-        var executable = compiler.Compile(stringReader);
-        var transformer = executable.Load();
-
         using var inputStream = new MemoryStream();
         using var stringWriter = new StringWriter();
+        using var stringReader = new StringReader(input.XSLT);
 
         try
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var processor = Saxon.Activation.Activator.Activate();
+            var compiler = processor.NewXsltCompiler();
+
+            var executable = compiler.Compile(stringReader);
+            var transformer = executable.Load();
+
             XmlDocument xmldoc = new();
             xmldoc.PreserveWhitespace = true;
 
             var xmlReaderSettings = new XmlReaderSettings
             {
                 DtdProcessing = DtdProcessing.Parse,
-                XmlResolver = options.EnableExternalEntities ? new XmlUrlResolver() : null
+                XmlResolver = options.EnableExternalEntities ? new XmlUrlResolver() : null,
             };
 
             using (var xmlReader = XmlReader.Create(new StringReader(input.XML), xmlReaderSettings))
             {
                 xmldoc.Load(xmlReader);
             }
+
             xmldoc.Save(inputStream);
             inputStream.Position = 0;
 
@@ -72,6 +73,7 @@ public static class XSLT
                 {
                     // Fallback to the underlying resolver if the URI is not a local file or an error occurs.
                 }
+
                 return null;
             });
 
@@ -83,17 +85,19 @@ public static class XSLT
             serializer.OutputWriter = stringWriter;
             transformer.Run(serializer);
             var output = stringWriter.GetStringBuilder().ToString();
+
             // By default Saxon always produces \n
             output = output.Replace("\n", Environment.NewLine);
             return new Result
             {
-                XML = output
+                Success = true,
+                XML = output,
+                Error = null,
             };
         }
         catch (Exception ex)
         {
-            var wrapper = new Exception("Error running XSLT transformation", ex);
-            throw wrapper;
+            return ex.Handle(options);
         }
         finally
         {

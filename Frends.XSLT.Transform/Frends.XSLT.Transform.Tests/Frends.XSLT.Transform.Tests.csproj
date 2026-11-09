@@ -1,22 +1,26 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
 
         <IsPackable>false</IsPackable>
-		<RootNamespace>Frends.XSLT.Transform.Tests</RootNamespace>
+        <RootNamespace>Frends.XSLT.Transform.Tests</RootNamespace>
+        <!-- SaxonCS 12.5.0 pulls in ICU4N.Resources with invalid locale folders. Saxon licence only covers 12.5, so it can't be upgraded, without upgrading Saxon.Activation. -->
+        <NoWarn>$(NoWarn);NETSDK1188</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
-        <PackageReference Include="NUnit" Version="3.13.2" />
-        <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
-        <PackageReference Include="coverlet.collector" Version="3.1.0" />
+        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0"/>
+        <PackageReference Include="NUnit" Version="3.13.2"/>
+        <PackageReference Include="NUnit3TestAdapter" Version="4.0.0"/>
+        <PackageReference Include="coverlet.collector" Version="3.1.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Frends.XSLT.Transform\Frends.XSLT.Transform.csproj" />
+        <ProjectReference Include="..\Frends.XSLT.Transform\Frends.XSLT.Transform.csproj"/>
     </ItemGroup>
 
 </Project>

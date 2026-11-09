@@ -1,37 +1,51 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <AssemblyName>Frends.XSLT.Transform</AssemblyName>
-    <RootNamespace>Frends.XSLT.Transform</RootNamespace>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <AssemblyName>Frends.XSLT.Transform</AssemblyName>
+        <RootNamespace>Frends.XSLT.Transform</RootNamespace>
 
-    <Version>2.4.0</Version>
-    <Authors>Frends</Authors>
-    <Copyright>Frends</Copyright>
-    <Company>Frends</Company>
-    <Product>Frends</Product>
-    <PackageTags>Frends</PackageTags>
-	<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Description>Frends Task for transforming XML using XSLT.</Description>
-    <PackageProjectUrl>https://frends.com/</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/FrendsPlatform/Frends.Xml2/tree/main/Frends.XSLT.Transform</RepositoryUrl>
-  </PropertyGroup>
+        <Version>3.0.0</Version>
+        <Authors>Frends</Authors>
+        <Copyright>Frends</Copyright>
+        <Company>Frends</Company>
+        <Product>Frends</Product>
+        <PackageTags>Frends</PackageTags>
+        <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <Description>Frends Task for transforming XML using XSLT.</Description>
+        <PackageProjectUrl>https://frends.com/</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/FrendsPlatform/Frends.Xml2/tree/main/Frends.XSLT.Transform</RepositoryUrl>
+        <!-- SaxonCS 12.5.0 pulls in ICU4N.Resources with invalid locale folders. Saxon licence only covers 12.5, so it can't be upgraded, without upgrading Saxon.Activation. -->
+        <NoWarn>$(NoWarn);NETSDK1188</NoWarn>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Frends.Saxon.Activation" Version="1.1.4" />
-    <PackageReference Include="SaxonCS" Version="12.5.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
-  </ItemGroup>
-  <ItemGroup>
-	<None Include="FrendsTaskMetadata.json" Pack="true" PackagePath="/">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
-	<None Include="../LICENSE.md" Pack="true" PackagePath="/">
-		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="FrendsTaskAnalyzers" Version="1.*">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Frends.Saxon.Activation" Version="1.1.4"/>
+        <PackageReference Include="SaxonCS" Version="12.5.0"/>
+        <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0"/>
+    </ItemGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="Frends.XSLT.Transform.Tests"/>
+    </ItemGroup>
+    <ItemGroup>
+        <AdditionalFiles Include="FrendsTaskMetadata.json"/>
+        <None Include="FrendsTaskMetadata.json" Pack="true" PackagePath="/">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Include="../LICENSE.md" Pack="true" PackagePath="/">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 
 </Project>
